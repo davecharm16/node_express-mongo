@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "es2020",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
+    "module": "esnext",    
+    "moduleResolution": "node",                                 /* Specify what module code is generated. */
+    "outDir": "./dist",                                   /* Specify an output folder for all emitted files. */
+    "forceConsistentCasingInFileNames": true,            /* Ensure that casing is correct in imports. */
+    "strict": true,                                      /* Enable all strict type-checking options. */                  /* Ensure 'use strict' is always emitted. */
+    "esModuleInterop": true,                     /* Disable e rror reporting for unreachable code. */                  /* Skip type checking .d.ts files that are included with TypeScript. */
+    "skipLibCheck": true,                   /* Raise an error when a function parameter isn't read. */                       /* Disable error reporting for unused labels. */
+    "allowUnreachableCode": false                         /* Skip type checking all .d.ts files. */
+  },
+  "include": ["src/**/*"],       // Include all files in src/ folder
+  "exclude": ["node_modules"]  
+}
