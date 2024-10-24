@@ -8,5 +8,3 @@ export class CustomError extends Error {
   }
 }
 
-// Example usage:
-throw new CustomError({ error: 'Invalid Email Address' });

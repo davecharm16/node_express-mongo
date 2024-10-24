@@ -1,4 +1,4 @@
-import express, { Express, Request, Response, json } from "express";
+import express, { Express, json } from "express";
 import connectToDB from "./db/dbconfig.js";
 import { userRouter } from "./router/users/users_route.js";
 import dotenv from 'dotenv';

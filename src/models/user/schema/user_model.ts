@@ -1,102 +1,99 @@
-import  mongoose, { Schema } from "mongoose";
-import  bcrypt from 'bcrypt';
+import mongoose, { Schema } from "mongoose";
+import bcrypt from 'bcrypt';
 import validator from 'validator';
 import jwt from 'jsonwebtoken';
 import { IUser } from "../interface/user_interface";
-import { CustomError } from "../../../core/extensions/extensions";
-import { error } from "console";
+import { CustomError } from "../../../core/extensions/extensions.js";
+
 
 const userSchema = new Schema<IUser>({
-  first_name : {
+  first_name: {
     type: String,
     required: true,
     trim: true,
-    createdAt : Date,
   },
-  last_name : {
+  last_name: {
     type: String,
     required: true,
     trim: true,
-    createdAt : Date,
   },
-  username : {
+  username: {
     type: String,
     required: true,
-    validate: (value: string)=>{
-      if(!validator.isLength(value, {min: 4})){
-        throw new CustomError({error: 'username must be 4 or more character'});
-      }
+    trim: true,
+    validate: {
+      validator: (value: string) => validator.isLength(value, { min: 4 }),
+      message: 'Username must be at least 4 characters long',
     },
-    createdAt : Date,
   },
-  email :  {
+  email: {
     type: String,
-    required : true,
-    unique : true,
+    required: true,
+    unique: true,
     lowercase: true,
-    validate : (value:string) => {
-      if(!validator.isEmail(value)){
-        throw new CustomError({error : 'Invalid Email Address'});
-      }
-    }
-  }, 
+    validate: {
+      validator: (value: string) => validator.isEmail(value),
+      message: 'Invalid Email Address',
+    },
+  },
   password: {
     type: String,
     required: true,
-    minLength: 7
+    minlength: 7,
   },
   tokens: [
     {
       token: {
-          type: String,
-          required: true
-      }
-    }
-  ]
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  createdAt: {
+    type: Date,
+    default: Date.now,  
+  },
 });
 
 
 userSchema.pre('save', async function (next) {
-  const user:IUser = this;
-  if(user.isModified('password')){
+  const user = this as IUser;
+
+  if (user.isModified('password')) {
     user.password = await bcrypt.hash(user.password, 8);
-  } 
+  }
+
   next();
 });
 
 userSchema.methods.generateAuthToken = async function () {
-  const user:IUser = this as IUser;
-  const key =  process.env.JWT_KEY;
-  if(key){
-    const token = jwt.sign({_id : user._id}, key);
-    user.tokens = user.tokens.concat({token});
+  const user = this as IUser;
+  const key = process.env.JWT_KEY;
+
+  if (key) {
+    const token = jwt.sign({ _id: user._id }, key);
+    user.tokens = user.tokens.concat({ token });
     await user.save();
-    return token
+    return token;
+  } else {
+    throw new CustomError({ error: 'JWT secret key not found' });
   }
-  else{
-    throw new CustomError({ error: 'No JWT token' });
-  }
-}
+};
 
-
-userSchema.statics.findByCredentials = async function (email, password){
-  const user: IUser | null  = await User.findOne({email});
-  const error = new CustomError({error: 'Invalid Login Credentials'});
-
-  if(!user){
-    throw error;
+userSchema.statics.findByCredentials = async function (email: string, password: string) {
+  const user = await UserModel.findOne({ email });
+  if (!user) {
+    throw new CustomError({ error: 'Invalid Login Credentials' });
   }
 
   const isPasswordMatch = await bcrypt.compare(password, user.password);
-
-  if(!isPasswordMatch) {
-    throw error;
+  if (!isPasswordMatch) {
+    throw new CustomError({ error: 'Invalid Login Credentials' });
   }
 
   return user;
-} 
+};
 
+const UserModel = mongoose.model<IUser>('User', userSchema);
 
-const User = mongoose.model('User', userSchema);
-
-export default User;
+export { UserModel as User }
