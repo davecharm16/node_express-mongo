@@ -1,6 +1,6 @@
 import express, { Express, Request, Response, json } from "express";
 import connectToDB from "./db/dbconfig.js";
-import { userRouter } from "./router/users/usersRoute.js";
+import { userRouter } from "./router/users/users_route.js";
 import dotenv from 'dotenv';
 dotenv.config();
 

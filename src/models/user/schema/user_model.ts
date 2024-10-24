@@ -2,7 +2,7 @@ import  mongoose, { Schema } from "mongoose";
 import  bcrypt from 'bcrypt';
 import validator from 'validator';
 import jwt from 'jsonwebtoken';
-import { IUser } from "../interface/userInterface";
+import { IUser } from "../interface/user_interface";
 import { CustomError } from "../../../core/extensions/extensions";
 import { error } from "console";
 
