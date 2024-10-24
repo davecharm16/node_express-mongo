@@ -19,5 +19,5 @@ connectToDB(MONGO_URL).then((db) => {
     console.log(`Server Listening on PORT: ${PORT}`);
   });
 }).catch((e)=>{
-  console.log(e);
+  console.log('Error', e);
 });
