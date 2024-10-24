@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 import bcrypt from 'bcrypt';
 import validator from 'validator';
 import jwt from 'jsonwebtoken';
-import { IUser } from "../interface/user_interface";
+import { IUser, IUserModel } from "../interface/user_interface";
 import { CustomError } from "../../../core/extensions/extensions.js";
 
 
@@ -94,6 +94,6 @@ userSchema.statics.findByCredentials = async function (email: string, password: 
   return user;
 };
 
-const UserModel = mongoose.model<IUser>('User', userSchema);
+const UserModel = mongoose.model<IUser, IUserModel>('User', userSchema);
 
 export { UserModel as User }
