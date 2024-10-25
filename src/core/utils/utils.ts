@@ -24,10 +24,13 @@ export function verifyToken(token: string): IJwtData | null {
 export async function validateTask (task: ITask | any): Promise<boolean | void>{
   const errors : IError[] = [];
   try{
-    const userAuthor = await User.findOne({_id: task?.author});
+    if(!task.author){
+      errors.push({error : 'Task Author is Required'});
+    }
+    await User.findOne({_id: task?.author});
   }
   catch(e){
-    errors.push({error: 'User Error'});
+    errors.push({error: 'Task Author not Found'});
   }
 
   try{
@@ -36,7 +39,7 @@ export async function validateTask (task: ITask | any): Promise<boolean | void>{
         await User.findById(user);
       }
     else{
-      throw errors.push({error: 'No Assigned Field'});
+      errors.push({error: 'No Assigned Field'});
     }
   }
   catch(e){
