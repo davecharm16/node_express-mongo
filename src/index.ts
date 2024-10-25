@@ -1,21 +1,28 @@
-import express, { Express, json } from "express";
+import express, { Express } from "express";
 import connectToDB from "./db/dbconfig.js";
-import { userRouter } from "./router/users/users_route.js";
 import dotenv from 'dotenv';
-import { AuthRouter } from "./router/auth/auth_route.js";
+import { AuthRoutes } from "./routes/auth_routes.js";
+import cors from 'cors';
+import { UserRoutes } from "./routes/user_routes.js";
+import { TaskRoutes } from "./routes/task_routes.js";
+
 dotenv.config();
 
 const app:Express = express();
 const PORT:string = process.env.PORT || '8000';
 const MONGO_URL:string = process.env.MONGODB_URL || '';
+app.use(cors());  
+app.use(express.json());
 
-app.use(json());
+//authentication routes
+app.use('/api/auth', AuthRoutes);
+//user routes
+app.use('/api/users', UserRoutes);
+//task routes
+app.use('/api/tasks', TaskRoutes);
 
-//user router
-app.use(userRouter);
 
-//
-app.use(AuthRouter);
+
 
 connectToDB(MONGO_URL).then((db) => {
   console.log(`Connected to ${db?.connection.host}`);
@@ -25,3 +32,4 @@ connectToDB(MONGO_URL).then((db) => {
 }).catch((e)=>{
   console.log('Error', e);
 });
+
