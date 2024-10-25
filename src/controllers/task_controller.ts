@@ -59,9 +59,23 @@ export const createTaskController = async (req: Request, res: Response) => {
     res.status(500).json(e);
   }
 }
-export const updateTaskController = (req: Request, res: Response) => {
-  
+export const updateTaskController = async (req: Request, res: Response) => {
+
 }
-export const deleteTaskController = (req: Request, res: Response) => {
-  
+
+export const deleteTaskController = async (req: Request, res: Response) => {
+  try {
+    const task_id = req.params?.id;
+    const user_id = req.body.user_id;
+    const task = await Task.findOneAndDelete({_id : task_id, author : user_id});
+    if(!task){
+       res.status(400).json({error: 'Cannot Delete this'});
+    }else{
+      res.status(200).json({message: 'Task Deleted Successfully'});
+    }
+  }
+  catch(e){
+    res.status(500).json(e);
+  }
+
 }
