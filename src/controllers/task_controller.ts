@@ -1,10 +1,7 @@
-import { validateTask, verifyToken } from '../core/utils/utils.js';
+import { validateTask } from '../core/utils/utils.js';
 import { Request, Response, } from 'express';
 import { Task } from '../models/task/schema/task_schema.js';
 import { Types } from 'mongoose';
-import { IJwtData } from '../core/interfaces/interfaces.js';
-import { ITask } from '../models/task/interface/task_interface.js';
-import { CustomError } from '../core/extensions/extensions.js';
 export const getAllTaskController = async (req: Request, res: Response)  => {
   try{
     const tasks = await Task.find()
