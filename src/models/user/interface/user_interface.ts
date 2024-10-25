@@ -6,7 +6,7 @@ export interface IUser extends Document {
   username: string;
   email: string;
   password: string;
-  tokens : IToken[];
+  tokens : Array<{ token: string }>;
   generateAuthToken(): Promise<string>; 
   createdAt: Date;
 }
