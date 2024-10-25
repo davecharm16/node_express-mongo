@@ -8,4 +8,4 @@ router.get('/',authMiddleWare, getUsersController);
 router.get('/:id', authMiddleWare,getUserController);
 
 
-export {router as userRoutes}
+export {router as UserRoutes}

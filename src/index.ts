@@ -1,9 +1,10 @@
 import express, { Express } from "express";
 import connectToDB from "./db/dbconfig.js";
 import dotenv from 'dotenv';
-import { authRoutes } from "./routes/auth_routes.js";
+import { AuthRoutes } from "./routes/auth_routes.js";
 import cors from 'cors';
-import { userRoutes } from "./routes/user_routes.js";
+import { UserRoutes } from "./routes/user_routes.js";
+import { TaskRoutes } from "./routes/task_routes.js";
 
 dotenv.config();
 
@@ -14,9 +15,13 @@ app.use(cors());
 app.use(express.json());
 
 //authentication routes
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', AuthRoutes);
 //user routes
-app.use('/api/users', userRoutes);
+app.use('/api/users', UserRoutes);
+//task routes
+app.use('/api/tasks', TaskRoutes);
+
+
 
 
 connectToDB(MONGO_URL).then((db) => {

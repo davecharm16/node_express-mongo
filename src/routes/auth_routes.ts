@@ -7,4 +7,4 @@ router.post('/logIn', loginInController);
 router.post('/signIn', signInController);
 
 
-export {router as authRoutes}
+export {router as AuthRoutes}
