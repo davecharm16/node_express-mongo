@@ -1,7 +1,10 @@
-import { validateTask } from '../core/utils/utils.js';
+import { validateTask, verifyToken } from '../core/utils/utils.js';
 import { Request, Response, } from 'express';
 import { Task } from '../models/task/schema/task_schema.js';
 import { Types } from 'mongoose';
+import { IJwtData } from '../core/interfaces/interfaces.js';
+import { ITask } from '../models/task/interface/task_interface.js';
+import { CustomError } from '../core/extensions/extensions.js';
 export const getAllTaskController = async (req: Request, res: Response)  => {
   try{
     const tasks = await Task.find()
@@ -59,9 +62,23 @@ export const createTaskController = async (req: Request, res: Response) => {
     res.status(500).json(e);
   }
 }
-export const updateTaskController = (req: Request, res: Response) => {
-  
+export const updateTaskController = async (req: Request, res: Response) => {
+
 }
-export const deleteTaskController = (req: Request, res: Response) => {
-  
+
+export const deleteTaskController = async (req: Request, res: Response) => {
+  try {
+    const task_id = req.params?.id;
+    const user_id = req.body.user_id;
+    const task = await Task.findOneAndDelete({_id : task_id, author : user_id});
+    if(!task){
+       res.status(400).json({error: 'Cannot Delete this'});
+    }else{
+      res.status(200).json({message: 'Task Deleted Successfully'});
+    }
+  }
+  catch(e){
+    res.status(500).json(e);
+  }
+
 }
