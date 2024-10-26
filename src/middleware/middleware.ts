@@ -9,11 +9,12 @@ import { verifyToken } from '../core/utils/utils.js';
 const authMiddleWare = async(req: Request & TokenRequest, res : Response, next : NextFunction) => {
   try{
     const token = req.header('Authorization')?.replace('Bearer ', '');
-    
-    if(!token)
-      throw new CustomError({error: 'Invalid Token or Key'});
-    const data:IJwtData | null= verifyToken(token);
-    const user  = User.findOne({_id : data?._id, 'tokens.token' : token});
+    if (!token) {
+      res.status(401).json({ error: 'Authorization token missing' });
+      return;
+    }
+    const data = verifyToken(token);
+    const user  = await User.findOne({_id : data?._id, 'tokens.token' : token});
     if(!user){
       throw new CustomError({error: 'Not Authorized to Access this content'});
     }
