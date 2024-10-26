@@ -1,11 +1,11 @@
 import authMiddleWare from '../middleware/middleware.js';
-import { getAllTaskController, getTaskByUserIdController, createTaskController, updateTaskController, deleteTaskController, getTaskByAuthorIdController } from '../controllers/task_controller.js';
+import { getAllTaskController, getTaskByAssignedUserIdController, createTaskController, updateTaskController, deleteTaskController, getTaskByAuthorIdController } from '../controllers/task_controller.js';
 import express from 'express';
 
 const router = express.Router();
 
 router.get('/', authMiddleWare, getAllTaskController);
-router.get('/assigned/:id', authMiddleWare, getTaskByUserIdController);
+router.get('/assigned/:id', authMiddleWare, getTaskByAssignedUserIdController);
 router.get('/authored/:id', authMiddleWare, getTaskByAuthorIdController);
 router.post('/create', authMiddleWare, createTaskController);
 router.put('/:id', authMiddleWare, updateTaskController);

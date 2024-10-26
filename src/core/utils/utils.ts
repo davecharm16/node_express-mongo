@@ -52,3 +52,25 @@ export async function validateTask (task: ITask | any): Promise<boolean | void>{
   
   return true;
 }
+
+export async function validateUpdateTask(task: ITask | any): Promise<boolean | void>{
+  const errors : IError[] = [];
+  try{
+    if(task.assigned_to)
+      for (const {user} of task?.assigned_to) {
+        await User.findById(user);
+      }
+    else{
+      errors.push({error: 'No Assigned Field'});
+    }
+  }
+  catch(e){
+    errors.push({ error: `Assigned User not found` });
+  }
+
+  if(errors.length > 0){
+    throw new CustomError({error: errors});
+  }
+  
+  return true;
+}
