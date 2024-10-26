@@ -1,5 +1,5 @@
 import { validateTask, validateUpdateTask } from '../core/utils/utils.js';
-import e, { Request, Response, } from 'express';
+import { Request, Response, } from 'express';
 import { Task } from '../models/task/schema/task_schema.js';
 import { Types } from 'mongoose';
 export const getAllTaskController = async (req: Request, res: Response)  => {
