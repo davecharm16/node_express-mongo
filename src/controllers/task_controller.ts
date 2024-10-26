@@ -2,6 +2,7 @@ import { validateTask, validateUpdateTask } from '../core/utils/utils.js';
 import { Request, Response, } from 'express';
 import { Task } from '../models/task/schema/task_schema.js';
 import { Types } from 'mongoose';
+import { TokenRequest } from 'core/interfaces/interfaces.js';
 export const getAllTaskController = async (req: Request, res: Response)  => {
   try{
     const tasks = await Task.find()
@@ -33,7 +34,6 @@ export const getTaskByAssignedUserIdController = async (req: Request, res: Respo
 export const getTaskByAuthorIdController = async (req: Request, res: Response) => {
   try{
     const userId = req.params?.id;
-    console.log(userId);
     const tasks = await Task.find({
       author: new Types.ObjectId(userId),
     })
@@ -47,32 +47,35 @@ export const getTaskByAuthorIdController = async (req: Request, res: Response) =
   }
 }
 
-export const createTaskController = async (req: Request, res: Response) => {
+export const createTaskController = async (req: Request & TokenRequest, res: Response) => {
   try{
     const taskRequest = req.body;
-    const validated = await validateTask(taskRequest);
+    const authorId = req.user?._id;
+    const validated = await validateTask({author:authorId, ...taskRequest});
     if(validated){
-      const task = new Task(taskRequest);
+      const task = new Task({author:authorId, ...taskRequest});
       await task.save();
       res.status(201).json({task});
     }
   }
   catch(e){
+    console.log(e);
     res.status(500).json(e);
   }
 }
 
-export const updateTaskController = async (req: Request, res: Response) => {
+export const updateTaskController = async (req: Request & TokenRequest, res: Response) => {
   try{
     const taskId = req.params.id;
-    const userId = req.body.userId;
+    const userId = req.user?._id;
+    console.log(req.body);
 
     if (!Types.ObjectId.isValid(taskId) || !Types.ObjectId.isValid(userId)) {
       res.status(400).json({ error: 'Invalid task or user ID format' });
     }
     else{
-      const { userId: _, ...updates } = req.body;
-      const validate = await validateUpdateTask(updates);
+      const updates = req.body;
+      await validateUpdateTask(updates);
       const updatedTask = await Task.findOneAndUpdate(
         {
           _id : taskId,
