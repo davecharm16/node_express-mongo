@@ -4,20 +4,22 @@ import { CustomError, IError } from "../extensions/extensions.js";
 import { IJwtData } from "../interfaces/interfaces.js";
 import { JwtPayload } from "jsonwebtoken";
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export function verifyToken(token: string): IJwtData | null {
-  const secretKey = process.env.JWT_KEY as string;
-  try {
-    const decoded = jwt.verify(token, secretKey);
-    if (typeof decoded === 'string') {
+  try{
+    const secretKey = process.env.JWT_KEY!;
+    if (!token) {
       return null;
     }
-    if ((decoded as JwtPayload)._id && (decoded as JwtPayload).token) {
-      return decoded as IJwtData;
+    const decoded = jwt.verify(token, secretKey) as { _id: string };
+    return {
+      _id : decoded._id,
+      token : token
     }
-    return null;
   } catch (err) {
-    throw new CustomError({ error: 'invalid token' });
+    return null;
   }
 }
 

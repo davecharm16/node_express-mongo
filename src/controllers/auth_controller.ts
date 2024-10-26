@@ -2,6 +2,10 @@ import { Request, Response } from 'express';
 import { IUser } from '../models/user/interface/user_interface.js';
 import { User } from '../models/user/schema/user_model.js';
 import { CustomError } from '../core/extensions/extensions.js';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import { TokenRequest } from '../core/interfaces/interfaces.js';
+dotenv.config();
 
 
 export const loginInController =  async(req : Request, res : Response) =>{
@@ -30,5 +34,28 @@ export const signInController = async (req: Request, res: Response) => {
   }
   catch(e){
     res.status(500).json(e);
+  }
+};
+
+export const logOutController = async (req: Request & TokenRequest, res: Response): Promise<void> => {
+  try {
+    req.user.tokens = req.user.tokens.filter((token: { token: string; }) => {
+        return token.token != req.token
+    })
+    await req.user.save()
+    res.json({message: 'Logged Out Successfully'})
+  } catch (e) {
+      console.log(e);
+      res.status(500).json(e);
+  }
+};
+
+export const logOutAll = async (req: Request & TokenRequest, res: Response): Promise<void> => {
+  try {
+    req.user.tokens.splice(0, req.user.tokens.length)
+    await req.user.save()
+    res.json({message: 'Logged out on all session'})
+  } catch (e) {
+      res.status(500).json({error : e})
   }
 };
