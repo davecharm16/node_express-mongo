@@ -23,6 +23,7 @@ const authMiddleWare = async(req: Request & TokenRequest, res : Response, next :
     next();
   }
   catch(e){
+    console.log(e);
     res.status(401).send({ error: 'Not authorized to access this resource' })
   }
 }
